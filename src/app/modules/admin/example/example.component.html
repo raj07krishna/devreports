@@ -1,11 +1,100 @@
-<div class="flex flex-col flex-auto min-w-0">
-
-    <!-- Main -->
-    <div class="flex-auto p-6 sm:p-10">
-
-        <!-- CONTENT GOES HERE -->
-        <div class="h-400 min-h-400 max-h-400 border-2 border-dashed border-gray-300 rounded-2xl"></div>
-
+<div class="flex flex-col width">
+    <div class="control-section-date">
+        <div id="control-wrapper-date">
+            <h4>Date Range</h4>
+            <ejs-daterangepicker cssClass="e-outline"></ejs-daterangepicker>
+        </div>
+    </div>
+    <div id="multiselect-sample" class="control-section">
+    
+        <div class="flex flex-row">
+            <div class="content-wrapper">
+                <div class="control-styles">
+                    <h4>Store</h4>
+                    <ejs-multiselect cssClass="e-outline" id='multiselect-checkbox-store' #checkbox
+                        [dataSource]='storesData' [placeholder]='"Select Stores"' [fields]='storesFields' [mode]='mode'
+                        [popupHeight]='popHeight' [showDropDownIcon]='true' showSelectAll='true'
+                        [filterBarPlaceholder]='filterPlaceholder'>
+                    </ejs-multiselect>
+                </div>
+            </div>
+            <div class="content-wrapper">
+                <div class="control-styles">
+                    <h4>Registers</h4>
+                    <ejs-multiselect cssClass="e-outline" id='multiselect-checkbox-registers' #checkbox
+                        [dataSource]='registerData' [placeholder]='"Select Registers"' [fields]='registerFields'
+                        [mode]='mode' [popupHeight]='popHeight' [showDropDownIcon]='true' showSelectAll='true'
+                        [filterBarPlaceholder]='filterPlaceholder'></ejs-multiselect>
+                </div>
+            </div>
+        </div>
+        <div class="flex flex-row">
+            <div class="content-wrapper">
+                <div class="control-styles">
+                    <h4>Orders</h4>
+                    <ejs-multiselect cssClass="e-outline" id='multiselect-checkbox-orders' #checkbox
+                        [dataSource]='orderTypesData' [placeholder]='"Select Orders"' [fields]='orderTypesFields'
+                        [mode]='mode' [popupHeight]='popHeight' [showDropDownIcon]='true' showSelectAll='true'
+                        [filterBarPlaceholder]='filterPlaceholder'></ejs-multiselect>
+                </div>
+            </div>
+            <div class="content-wrapper">
+                <div class="control-styles">
+                    <h4>Payment</h4>
+                    <ejs-multiselect cssClass="e-outline" id='multiselect-checkbox-payment' #checkbox
+                        [dataSource]='paymentTypesData' [placeholder]='"Select Payment"' [fields]='paymentFields'
+                        [mode]='mode' [popupHeight]='popHeight' [showDropDownIcon]='true' showSelectAll='true'
+                        [filterBarPlaceholder]='filterPlaceholder'></ejs-multiselect>
+                </div>
+            </div>
+        </div>
+    
+    </div>
+    <br>
+    <br>
+    <div class="width">
+        <ejs-grid [dataSource]='ordersDataSource' [toolbar]='toolbarOptions' [loadingIndicator]='loadingIndicator'
+            [showColumnChooser]='true' [allowSorting]='true' [allowFiltering]='true' [allowPaging]='true'
+            [filterSettings]='filterOption' [allowResizing]='true' width='100%'>
+            <e-columns>
+                <e-column width="200" field='Date' headerText='Date' textAlign='Left' [showInColumnChooser]='false'>
+                </e-column>
+                <e-column width="200" field='PaymentAmount' headerText='Payment Amount'></e-column>
+                <e-column width="200" field='PaymentMethod' headerText='Payment Method' textAlign='Left'></e-column>
+                <e-column width="200" field='PaymentTime' headerText='Payment Time' textAlign='Left' format='yMd' [visible]='false'>
+                </e-column>
+                <e-column width="200" field='Time' headerText='Time' textAlign='Left' format='yMd' [visible]='false'>
+                </e-column>
+                <e-column textAlign='Left' [visible]='false' width="200" field='sales_order_assigned_user_name'
+                    headerText='Sales Order Assigned User Name'></e-column>
+                <e-column textAlign='Left' width="200" field='sales_order_dinein_table_name' headerText='Sales Order Dinein Table Name'>
+                </e-column>
+                <e-column textAlign='Left' width="200" field='sales_order_discount_total' headerText='Sales Order Discount Total'>
+                </e-column>
+                <e-column textAlign='Left' width="200" field='sales_order_gross_total' headerText='Sales Order gross Total'></e-column>
+                <e-column textAlign='Left' [visible]='false' width="200" field='sales_order_guid' headerText='Sales Order Guid'>
+                </e-column>
+                <e-column textAlign='Left' width="200" field='sales_order_id' headerText='Sales Order Id'></e-column>
+                <e-column textAlign='Left' width="200" field='sales_order_net_total_amount' headerText='Sales Order Net Total Amount'>
+                </e-column>
+                <e-column textAlign='Left' width="200" field='sales_order_number' headerText='Sales Order Number'></e-column>
+                <e-column textAlign='Left' width="200" field='sales_order_roundoff_amount' headerText='Sales Order Roundoff Amount'>
+                </e-column>
+                <e-column textAlign='Left' width="200" field='sales_order_service_type' headerText='Sales Order Service Type'>
+                </e-column>
+                <e-column textAlign='Left' width="200" field='sales_order_status' headerText='Sales Order Status'></e-column>
+                <e-column textAlign='Left' [visible]='false' width="200" field='sales_order_store_register_guid'
+                    headerText='Sales Order Store Register Guid'></e-column>
+                <e-column textAlign='Left' width="200" field='sales_order_surcharge_total' headerText='Sales Order Surcharge Total'>
+                </e-column>
+                <e-column textAlign='Left' width="200" field='sales_order_tax_total' headerText='Sales Order Tax Total'></e-column>
+                <e-column textAlign='Left' width="200" field='sales_order_type' headerText='Sales Order Type'></e-column>
+                <e-column textAlign='Left' field='sales_order_void_comp_total' headerText='Sales Order Void Comp Total'>
+                </e-column>
+    
+    
+            </e-columns>
+        </ejs-grid>
     </div>
 
 </div>
