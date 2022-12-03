@@ -1,55 +1,103 @@
-<div class="flex flex-col width">
-    <div class="control-section-date">
-        <div id="control-wrapper-date">
-            <h4>Date Range</h4>
-            <ejs-daterangepicker cssClass="e-outline"></ejs-daterangepicker>
+<div class="flex flex-col width p-2">
+    <form [formGroup]="filterForm">
+        <div class="flex flex-row filter-container">
+            <div class="flex flex-col input-container mr-3">
+                <div class="flex flex-row">
+                    <mat-form-field appearance="outline" class="mr-2 ">
+                        <mat-label>Stores</mat-label>
+                        <mat-select formControlName="store" multiple>
+                            <mat-select-trigger>
+                                {{filterForm.get('store').value[0]?.store_name || ''}}
+                                <span *ngIf="(filterForm.get('store').value?.length || 0) > 1">
+                                    (+{{(filterForm.get('store').value?.length || 0) - 1}}
+                                    {{filterForm.get('store').value?.length ===
+                                    2 ? 'other' : 'others'}})
+                                </span>
+                            </mat-select-trigger>
+                            <mat-option *ngFor="let store of storesData" [value]="store">{{store.store_name}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="">
+                        <mat-label>Register</mat-label>
+                        <mat-select formControlName="register" multiple>
+                            <mat-select-trigger>
+                                {{filterForm.get('register').value[0]?.store_register_name || ''}}
+                                <span *ngIf="(filterForm.get('register').value?.length || 0) > 1">
+                                    (+{{(filterForm.get('register').value?.length || 0) - 1}}
+                                    {{filterForm.get('register').value?.length ===
+                                    2 ? 'other' : 'others'}})
+                                </span>
+                            </mat-select-trigger>
+                            <mat-option *ngFor="let register of registerData" [value]="register">
+                                {{register.store_register_name}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+
+                </div>
+                <div class="flex flex-row">
+
+                    <mat-form-field appearance="outline" class="mr-2 ">
+                        <mat-label>Order Types</mat-label>
+                        <mat-select formControlName="orderStatus" multiple>
+                            <mat-select-trigger>
+                                {{filterForm.get('orderStatus').value[0] || ''}}
+                                <span *ngIf="(filterForm.get('orderStatus').value?.length || 0) > 1">
+                                    (+{{(filterForm.get('orderStatus').value?.length || 0) - 1}}
+                                    {{filterForm.get('orderStatus').value?.length ===
+                                    2 ? 'other' : 'others'}})
+                                </span>
+                            </mat-select-trigger>
+                            <mat-option *ngFor="let order of orderTypesData" [value]="order">{{order}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="">
+                        <mat-label>Payment Type</mat-label>
+                        <mat-select formControlName="paymentMethods" multiple>
+                            <mat-select-trigger>
+                                {{filterForm.get('paymentMethods').value[0]?.payment_type_name || ''}}
+                                <span
+                                    *ngIf="(filterForm.get('paymentMethods').value?.length || 0) > 1">
+                                    (+{{(filterForm.get('paymentMethods').value?.length || 0) - 1}}
+                                    {{filterForm.get('paymentMethods').value?.length ===
+                                    2 ? 'other' : 'others'}})
+                                </span>
+                            </mat-select-trigger>
+                            <mat-option *ngFor="let payment of paymentTypesData" [value]="payment">
+                                {{payment.payment_type_name}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="flex flex-col date-btn-container">
+                <div>
+                    <mat-form-field appearance="outline" class="w-full">
+                        <mat-label>Enter a date range</mat-label>
+                        <mat-date-range-input formGroupName="range" [rangePicker]="picker">
+                            <input matStartDate formControlName="startDate" placeholder="Start date">
+                            <input matEndDate formControlName="endDate" placeholder="End date">
+                        </mat-date-range-input>
+                        <mat-hint>YYYY/MM/DD – YYYY/MM/DD</mat-hint>
+                        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-date-range-picker #picker></mat-date-range-picker>
+
+                        <mat-error *ngIf="filterForm.get(['range','startDate']).hasError('matStartDateInvalid')">
+                            Invalid start date
+                        </mat-error>
+                        <mat-error *ngIf="filterForm.get(['range','endDate']).hasError('matEndDateInvalid')">Invalid
+                            end date</mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="flex flex-row justify-around mt-3">
+                    <button mat-raised-button color="warn">Reset</button>
+                    <button mat-raised-button color="primary" (click)="search()">Search</button>
+                </div>
+            </div>
         </div>
-    </div>
-    <div id="multiselect-sample" class="control-section">
-    
-        <div class="flex flex-row">
-            <div class="content-wrapper">
-                <div class="control-styles">
-                    <h4>Store</h4>
-                    <ejs-multiselect cssClass="e-outline" id='multiselect-checkbox-store' #checkbox
-                        [dataSource]='storesData' [placeholder]='"Select Stores"' [fields]='storesFields' [mode]='mode'
-                        [popupHeight]='popHeight' [showDropDownIcon]='true' showSelectAll='true'
-                        [filterBarPlaceholder]='filterPlaceholder'>
-                    </ejs-multiselect>
-                </div>
-            </div>
-            <div class="content-wrapper">
-                <div class="control-styles">
-                    <h4>Registers</h4>
-                    <ejs-multiselect cssClass="e-outline" id='multiselect-checkbox-registers' #checkbox
-                        [dataSource]='registerData' [placeholder]='"Select Registers"' [fields]='registerFields'
-                        [mode]='mode' [popupHeight]='popHeight' [showDropDownIcon]='true' showSelectAll='true'
-                        [filterBarPlaceholder]='filterPlaceholder'></ejs-multiselect>
-                </div>
-            </div>
-        </div>
-        <div class="flex flex-row">
-            <div class="content-wrapper">
-                <div class="control-styles">
-                    <h4>Orders</h4>
-                    <ejs-multiselect cssClass="e-outline" id='multiselect-checkbox-orders' #checkbox
-                        [dataSource]='orderTypesData' [placeholder]='"Select Orders"' [fields]='orderTypesFields'
-                        [mode]='mode' [popupHeight]='popHeight' [showDropDownIcon]='true' showSelectAll='true'
-                        [filterBarPlaceholder]='filterPlaceholder'></ejs-multiselect>
-                </div>
-            </div>
-            <div class="content-wrapper">
-                <div class="control-styles">
-                    <h4>Payment</h4>
-                    <ejs-multiselect cssClass="e-outline" id='multiselect-checkbox-payment' #checkbox
-                        [dataSource]='paymentTypesData' [placeholder]='"Select Payment"' [fields]='paymentFields'
-                        [mode]='mode' [popupHeight]='popHeight' [showDropDownIcon]='true' showSelectAll='true'
-                        [filterBarPlaceholder]='filterPlaceholder'></ejs-multiselect>
-                </div>
-            </div>
-        </div>
-    
-    </div>
+    </form>
     <br>
     <br>
     <div class="width">
@@ -61,38 +109,51 @@
                 </e-column>
                 <e-column width="200" field='PaymentAmount' headerText='Payment Amount'></e-column>
                 <e-column width="200" field='PaymentMethod' headerText='Payment Method' textAlign='Left'></e-column>
-                <e-column width="200" field='PaymentTime' headerText='Payment Time' textAlign='Left' format='yMd' [visible]='false'>
+                <e-column width="200" field='PaymentTime' headerText='Payment Time' textAlign='Left' format='yMd'
+                    [visible]='false'>
                 </e-column>
                 <e-column width="200" field='Time' headerText='Time' textAlign='Left' format='yMd' [visible]='false'>
                 </e-column>
                 <e-column textAlign='Left' [visible]='false' width="200" field='sales_order_assigned_user_name'
                     headerText='Sales Order Assigned User Name'></e-column>
-                <e-column textAlign='Left' width="200" field='sales_order_dinein_table_name' headerText='Sales Order Dinein Table Name'>
+                <e-column textAlign='Left' width="200" field='sales_order_dinein_table_name'
+                    headerText='Sales Order Dinein Table Name'>
                 </e-column>
-                <e-column textAlign='Left' width="200" field='sales_order_discount_total' headerText='Sales Order Discount Total'>
+                <e-column textAlign='Left' width="200" field='sales_order_discount_total'
+                    headerText='Sales Order Discount Total'>
                 </e-column>
-                <e-column textAlign='Left' width="200" field='sales_order_gross_total' headerText='Sales Order gross Total'></e-column>
-                <e-column textAlign='Left' [visible]='false' width="200" field='sales_order_guid' headerText='Sales Order Guid'>
+                <e-column textAlign='Left' width="200" field='sales_order_gross_total'
+                    headerText='Sales Order gross Total'></e-column>
+                <e-column textAlign='Left' [visible]='false' width="200" field='sales_order_guid'
+                    headerText='Sales Order Guid'>
                 </e-column>
                 <e-column textAlign='Left' width="200" field='sales_order_id' headerText='Sales Order Id'></e-column>
-                <e-column textAlign='Left' width="200" field='sales_order_net_total_amount' headerText='Sales Order Net Total Amount'>
+                <e-column textAlign='Left' width="200" field='sales_order_net_total_amount'
+                    headerText='Sales Order Net Total Amount'>
                 </e-column>
-                <e-column textAlign='Left' width="200" field='sales_order_number' headerText='Sales Order Number'></e-column>
-                <e-column textAlign='Left' width="200" field='sales_order_roundoff_amount' headerText='Sales Order Roundoff Amount'>
+                <e-column textAlign='Left' width="200" field='sales_order_number' headerText='Sales Order Number'>
                 </e-column>
-                <e-column textAlign='Left' width="200" field='sales_order_service_type' headerText='Sales Order Service Type'>
+                <e-column textAlign='Left' width="200" field='sales_order_roundoff_amount'
+                    headerText='Sales Order Roundoff Amount'>
                 </e-column>
-                <e-column textAlign='Left' width="200" field='sales_order_status' headerText='Sales Order Status'></e-column>
+                <e-column textAlign='Left' width="200" field='sales_order_service_type'
+                    headerText='Sales Order Service Type'>
+                </e-column>
+                <e-column textAlign='Left' width="200" field='sales_order_status' headerText='Sales Order Status'>
+                </e-column>
                 <e-column textAlign='Left' [visible]='false' width="200" field='sales_order_store_register_guid'
                     headerText='Sales Order Store Register Guid'></e-column>
-                <e-column textAlign='Left' width="200" field='sales_order_surcharge_total' headerText='Sales Order Surcharge Total'>
+                <e-column textAlign='Left' width="200" field='sales_order_surcharge_total'
+                    headerText='Sales Order Surcharge Total'>
                 </e-column>
-                <e-column textAlign='Left' width="200" field='sales_order_tax_total' headerText='Sales Order Tax Total'></e-column>
-                <e-column textAlign='Left' width="200" field='sales_order_type' headerText='Sales Order Type'></e-column>
+                <e-column textAlign='Left' width="200" field='sales_order_tax_total' headerText='Sales Order Tax Total'>
+                </e-column>
+                <e-column textAlign='Left' width="200" field='sales_order_type' headerText='Sales Order Type'>
+                </e-column>
                 <e-column textAlign='Left' field='sales_order_void_comp_total' headerText='Sales Order Void Comp Total'>
                 </e-column>
-    
-    
+
+
             </e-columns>
         </ejs-grid>
     </div>

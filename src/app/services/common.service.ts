@@ -31,7 +31,7 @@ export class CommonService {
     return this.http.get(API_END_POINTS.GET_ORDER_TYPES)
   }
 
-  getOrdersData(){
-    return this.http.post(API_END_POINTS.GET_ORDERS, {})
+  getOrdersData(params:string){
+    return this.http.post(`${API_END_POINTS.GET_ORDERS}${params}`, {})
   }
 }

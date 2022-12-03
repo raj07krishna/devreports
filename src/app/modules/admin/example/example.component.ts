@@ -1,87 +1,76 @@
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { CheckBoxComponent } from '@syncfusion/ej2-angular-buttons';
-import { MultiSelectComponent } from '@syncfusion/ej2-angular-dropdowns';
+import { FormControl, FormGroup } from '@angular/forms';
+import { DateAdapter, MAT_DATE_LOCALE, MAT_DATE_FORMATS } from '@angular/material/core';
+import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
 import { ToolbarItems, FilterSettingsModel, GridComponent, ExcelExportProperties } from '@syncfusion/ej2-angular-grids';
 import { ClickEventArgs } from '@syncfusion/ej2-angular-navigations';
 import { CommonService } from '../../../services/common.service';
 
+export const MY_FORMATS = {
+    parse: {
+        dateInput: 'LL',
+    },
+    display: {
+        dateInput: 'YYYY/MM/DD',
+        monthYearLabel: 'YYYY',
+        dateA11yLabel: 'LL',
+        monthYearA11yLabel: 'YYYY',
+    },
+};
+
 @Component({
-    selector     : 'example',
-    templateUrl  : './example.component.html',
+    selector: 'example',
+    templateUrl: './example.component.html',
     styleUrls: ['./example.component.scss'],
-    encapsulation: ViewEncapsulation.None
+    providers: [
+        {
+            provide: DateAdapter,
+            useClass: MomentDateAdapter,
+            deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS],
+        },
+
+        { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
+    ],
 })
-export class ExampleComponent implements OnInit
-{
+export class ExampleComponent implements OnInit {
     public ordersDataSource!: object[];
     public loadingIndicator: any;
     public toolbarOptions: ToolbarItems[] = ['ExcelExport', 'ColumnChooser'];
     public filterOption: FilterSettingsModel = { type: 'Excel' };
     @ViewChild('grid') public grid!: GridComponent;
-    @ViewChild('checkbox')
-    public mulObj!: MultiSelectComponent;
-    @ViewChild('selectall')
-    public checkboxObj!: CheckBoxComponent;
-    @ViewChild('dropdown')
-    public dropdownObj!: CheckBoxComponent;
-    @ViewChild('select')
-    public reorderObj!: CheckBoxComponent;
-    public mode: string = '';
-    public filterPlaceholder: string = '';
-    //define the data with category
-    public countries: { [key: string]: Object }[] = [
-        { Name: 'Australia', Code: 'AU' },
-        { Name: 'Bermuda', Code: 'BM' },
-        { Name: 'Canada', Code: 'CA' },
-        { Name: 'Cameroon', Code: 'CM' },
-        { Name: 'Denmark', Code: 'DK' },
-        { Name: 'France', Code: 'FR' },
-        { Name: 'Finland', Code: 'FI' },
-        { Name: 'Germany', Code: 'DE' },
-        { Name: 'Greenland', Code: 'GL' },
-        { Name: 'Hong Kong', Code: 'HK' },
-        { Name: 'India', Code: 'IN' },
-        { Name: 'Italy', Code: 'IT' },
-        { Name: 'Japan', Code: 'JP' },
-        { Name: 'Mexico', Code: 'MX' },
-        { Name: 'Norway', Code: 'NO' },
-        { Name: 'Poland', Code: 'PL' },
-        { Name: 'Switzerland', Code: 'CH' },
-        { Name: 'United Kingdom', Code: 'GB' },
-        { Name: 'United States', Code: 'US' }
-    ];
     storesData = [];
     registerData = [];
     orderTypesData: any[] = [];
     paymentTypesData = [];
-    public storesFields: Object = { text: 'store_name', value: 'store_guid' };
-    public registerFields: Object = { text: 'store_register_name', value: 'store_register_guid' };
-    public orderTypesFields: Object = { text: 'value', value: 'id' };
-    public paymentFields: Object = { text: 'payment_type_name', value: 'payment_type_guid' };
+    filterForm: FormGroup
 
     // set the MultiSelect popup height
     public popHeight: string = '350px';
 
     constructor(private common: CommonService) {
+        this.filterForm = new FormGroup(
+            {
+                store: new FormControl([]),
+                register: new FormControl([]),
+                orderStatus: new FormControl([]),
+                paymentMethods: new FormControl([]),
+                range: new FormGroup({
+                    startDate: new FormControl<Date | null>(null),
+                    endDate: new FormControl<Date | null>(null),
+                })
+            }
+        )
+        console.log(this.filterForm)
     }
 
     ngOnInit(): void {
-        this.mode = 'CheckBox';
-        this.filterPlaceholder = 'Search countries';
         this.loadingIndicator = { indicatorType: 'Shimmer' };
         this.common.getStoreData().subscribe((data: any) => {
             this.storesData = data;
             console.log(data)
         })
         this.common.getOrderTypesData().subscribe((data: any) => {
-            data.map((item: string) => {
-                let itemObj =
-                {
-                    'id': item,
-                    'value': item
-                }
-                this.orderTypesData.push(itemObj)
-            })
+            this.orderTypesData = data
             console.log(data)
         })
         this.common.getPayementTypesData().subscribe((data: any) => {
@@ -92,22 +81,11 @@ export class ExampleComponent implements OnInit
             this.registerData = data;
             console.log('register', data)
         })
-        this.common.getOrdersData().subscribe((data: any) => {
+        this.common.getOrdersData('').subscribe((data: any) => {
             this.ordersDataSource = data;
             console.log('register', data)
         })
-    }
-    public onChange(): void {
-        // enable or disable the select all in Multiselect based on CheckBox checked state
-        this.mulObj.showSelectAll = this.checkboxObj.checked;
-    }
-    public onChangeDrop(): void {
-        // enable or disable the dropdown button in Multiselect based on CheckBox checked state
-        this.mulObj.showDropDownIcon = this.dropdownObj.checked;
-    }
-    public onChangeReorder(): void {
-        // enable or disable the list reorder in Multiselect based on CheckBox checked state
-        this.mulObj.enableSelectionOrder = this.reorderObj.checked;
+        this.filterForm.valueChanges.subscribe(data => console.log(data))
     }
 
     toolbarClick(args: ClickEventArgs): void {
@@ -117,5 +95,21 @@ export class ExampleComponent implements OnInit
             };
             this.grid.excelExport(excelExportProperties);
         }
+    }
+
+    search() {
+        let params = '?'
+        for (const [key, value] of Object.entries(this.filterForm.value)) {
+            switch (key) {
+                case 'orderStatus':
+                    params = `${params}`
+                    break;
+            
+                default:
+                    break;
+            }
+        }
+        this.filterForm.value
+        this.common.getOrdersData('')
     }
 }
