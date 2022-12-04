@@ -1,0 +1,16 @@
+<div class="control-section">
+    <div>
+        <ejs-accumulationchart id="pyramidcontainer" #pyramid style='display:block; width: 100%'
+            [legendSettings]="legendSettings" [tooltip]="tooltip" [title]="title" (load)='load($event)'
+            (resized)='onChartResized($event)' height="250px">
+            <e-accumulation-series-collection>
+                <e-accumulation-series name='Food' [dataSource]='data' [xName]="xName" [yName]='yName'
+                    [gapRatio]="gapRatio" [emptyPointSettings]="emptyPointSettings" width="50%" height="100%"
+                    [explode]="explode" [dataLabel]="dataLabel" type='Pyramid'> </e-accumulation-series>
+            </e-accumulation-series-collection>
+        </ejs-accumulationchart>
+    </div>
+    <div *ngIf="loading" class="spinner">
+        <mat-spinner ></mat-spinner>
+    </div>
+</div>

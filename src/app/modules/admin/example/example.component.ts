@@ -42,29 +42,49 @@ export class ExampleComponent implements OnInit {
     registerData = [];
     orderTypesData: any[] = [];
     paymentTypesData = [];
-    filterForm: FormGroup
-
+    filterForm: FormGroup;
+    summaryData: any;
+    pyramidData: any;
+    pyramidXName;
+    pyramidYName;
+    stepLineData: any;
+    stepLineXName;
+    stepLineYName;
+    stepLineMinData;
+    stepLineMaxData;
+    lineZoneData: any;
+    lineZoneXName;
+    lineZoneYName;
+    lineZoneMinData;
+    lineZoneMaxData;
     // set the MultiSelect popup height
     public popHeight: string = '350px';
+    loadingStepLine= true;
+    loadingLineZone= true;
+    loadingPyramid= true;
+    summaryLoading = true
 
     constructor(private common: CommonService) {
+        this.initialiseForm();
+        console.log(this.filterForm)
+    }
+
+    initialiseForm() {
         this.filterForm = new FormGroup(
             {
                 store: new FormControl([]),
                 register: new FormControl([]),
                 orderStatus: new FormControl([]),
-                paymentMethods: new FormControl([]),
+                paymentMethod: new FormControl([]),
                 range: new FormGroup({
-                    startDate: new FormControl<Date | null>(null),
-                    endDate: new FormControl<Date | null>(null),
+                    startdate: new FormControl<Date | null>(null),
+                    enddate: new FormControl<Date | null>(null),
                 })
             }
         )
-        console.log(this.filterForm)
     }
 
     ngOnInit(): void {
-        this.loadingIndicator = { indicatorType: 'Shimmer' };
         this.common.getStoreData().subscribe((data: any) => {
             this.storesData = data;
             console.log(data)
@@ -81,11 +101,59 @@ export class ExampleComponent implements OnInit {
             this.registerData = data;
             console.log('register', data)
         })
-        this.common.getOrdersData('').subscribe((data: any) => {
+        this.allApICall({})
+    }
+
+    allApICall(params) {
+        this.loadingIndicator = { indicatorType: 'Shimmer' };
+        this.loadingStepLine = true;
+        this.loadingLineZone = true;
+        this.loadingPyramid = true;
+        this.summaryLoading = true
+        this.common.getOrdersData(params).subscribe((data: any) => {
             this.ordersDataSource = data;
-            console.log('register', data)
+            console.log('table', data)
         })
-        this.filterForm.valueChanges.subscribe(data => console.log(data))
+        this.common.getOrdersBestDayData(params).subscribe((data: any) => {
+            this.stepLineData = data.data;
+            this.stepLineMinData = data.min;
+            this.stepLineMaxData = data.max;
+            this.stepLineXName = 'sales_order_date';
+            this.stepLineYName = 'sales_order_amount';
+            this.loadingStepLine = false;
+
+            console.log('graph 1', data)
+        })
+        this.common.getOrdersBestTimeData(params).subscribe((data: any) => {
+            this.lineZoneData = [];
+            data.data.map((item: any) => {
+                this.lineZoneData.push({
+                    XValue: parseInt(item.sales_order_hour),
+                    YValue: parseInt(item.sales_order_amount)
+                })
+            })
+            this.lineZoneMinData = data.min;
+            this.lineZoneMaxData = data.max;
+            this.lineZoneXName = 'sales_order_hour';
+            this.lineZoneYName = 'sales_order_amount';
+            this.loadingLineZone = false;
+
+            console.log('graph 2', data)
+        })
+        this.common.getOrdersByDatedata(params).subscribe((data: any) => {
+            this.pyramidData = data;
+            this.pyramidXName = 'sales_order_day';
+            this.pyramidYName = 'sales_order_amount';
+            this.loadingPyramid = false;
+
+            console.log('graph 3', data)
+
+        })
+        this.common.getOrdersStats(params).subscribe((data: any) => {
+            this.summaryData = [...data]
+            this.summaryLoading = false
+            console.log('summary', data)
+        })
     }
 
     toolbarClick(args: ClickEventArgs): void {
@@ -98,18 +166,64 @@ export class ExampleComponent implements OnInit {
     }
 
     search() {
-        let params = '?'
+        let postData = {};
         for (const [key, value] of Object.entries(this.filterForm.value)) {
+
             switch (key) {
                 case 'orderStatus':
-                    params = `${params}`
+                    postData[`${key}`] = value.toString()
                     break;
-            
+                case 'paymentMethod':
+                    postData[`${key}`] = this.extractId(value, 'payment_type_guid').toString();
+
+                    break;
+                case 'register':
+                    postData[`${key}`] = this.extractId(value, 'store_register_guid').toString()
+
+                    break;
+                case 'store':
+                    postData[`${key}`] = this.extractId(value, 'store_guid').toString()
+
+                    break;
+                case 'range':
+                    postData['startdate'] = this.convertDate(value['startdate']);
+                    postData['enddate'] = this.convertDate(value['enddate']);
+                    break;
                 default:
                     break;
             }
         }
         this.filterForm.value
-        this.common.getOrdersData('')
+        this.allApICall(postData);
+    }
+
+    extractId(arrayData, idText) {
+        let arrayOfId = []
+        if (arrayData.length > 0) {
+            arrayData.forEach(element => {
+                arrayOfId.push(element[`${idText}`])
+            });
+            return arrayOfId
+        } else {
+            return '';
+        }
+
+    }
+
+    convertDate(date: any) {
+        date = new Date(date.toDate());
+        var mm = date.getMonth() + 1; // getMonth() is zero-based
+        var dd = date.getDate();
+
+        return [date.getFullYear(),
+            '-',
+        (mm > 9 ? '' : '0') + mm,
+            '-',
+        (dd > 9 ? '' : '0') + dd
+        ].join('');
+    };
+
+    reset() {
+        this.initialiseForm()
     }
 }

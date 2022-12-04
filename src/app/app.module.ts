@@ -11,6 +11,7 @@ import { mockApiServices } from 'app/mock-api';
 import { LayoutModule } from 'app/layout/layout.module';
 import { AppComponent } from 'app/app.component';
 import { appRoutes } from 'app/app.routing';
+import { LocationStrategy, HashLocationStrategy } from '@angular/common';
 
 const routerConfig: ExtraOptions = {
     preloadingStrategy       : PreloadAllModules,
@@ -39,7 +40,8 @@ const routerConfig: ExtraOptions = {
     ],
     bootstrap   : [
         AppComponent
-    ]
+    ],
+    providers: [{provide: LocationStrategy, useClass: HashLocationStrategy}],
 })
 export class AppModule
 {

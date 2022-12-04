@@ -1,17 +1,10 @@
-.control-section {
-    display: flex;
-    flex-direction: column;
+.ejs-chart {
+    width: inherit !important;
 }
 
-h4 {
-    margin-top: 8px;
-    margin-bottom: 8px;
-}
+.ejs-accumulationchart {
+    width: inherit !important;
 
-
-
-.width {
-    width: 100%;
 }
 
 .spinner {
@@ -24,7 +17,6 @@ h4 {
     align-items: center;
     justify-content: center;
     background: white;
-    opacity: 0.8;
 }
 
 .control-section {

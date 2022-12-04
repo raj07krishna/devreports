@@ -13,6 +13,14 @@ import { CommonModule } from '@angular/common';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import {MatButtonModule} from '@angular/material/button';
+import { RounderColumnChartModule } from '../rounder-column-chart/rounder-column-chart.module';
+import { AccumilationPyramidChartModule } from '../accumilation-pyramid-chart/accumilation-pyramid-chart.module';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { LineZoneChartModule } from '../line-zone-chart/line-zone-chart.module';
+import { StepLineChartModule } from '../step-line-chart/step-line-chart.module';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 const exampleRoutes: Route[] = [
     {
@@ -41,8 +49,19 @@ const exampleRoutes: Route[] = [
         MatDatepickerModule,
         MatNativeDateModule,
         MatButtonModule,
+        RounderColumnChartModule,
+        AccumilationPyramidChartModule,
+        LineZoneChartModule,
+        StepLineChartModule,
+        LineZoneChartModule,
+        MatButtonModule,
+        MatDividerModule,
+        MatIconModule,
+        MatMenuModule,
+        MatProgressSpinnerModule
     ],
     providers: [MatNativeDateModule, PageService, SortService, FilterService, ColumnMenuService, FreezeService, ToolbarService, ColumnChooserService, ResizeService],
+    exports:[ExampleComponent]
 
 })
 export class ExampleModule {

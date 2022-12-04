@@ -1,0 +1,52 @@
+<div class="control-section">
+    <div align='center'>
+        <ejs-chart style='display:block' align='center' [id]='id' [title]='title'
+            [primaryXAxis]='primaryXAxis' [primaryYAxis]='primaryYAxis' [tooltip]='tooltip' (load)='load($event)'
+            [chartArea]='chartArea' [legendSettings]='legend' width='100%' height="250px">
+            <e-annotations>
+                <e-annotation x='68%' y='10%' region='Series'>
+                    <ng-template #content>
+                        <div style='width:80px; padding: 5px;'>
+                            <table style='width: 100%'>
+                                <tr>
+                                    <td class="chartPadding blueCircle">High</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </ng-template>
+                </e-annotation>
+                <e-annotation x='25%' y='47%' region='Series'>
+                    <ng-template #content>
+                        <div style='width:80px; padding: 5px;'>
+                            <table style='width: 100%'>
+                                <tr>
+                                    <td class="chartPadding greenCircle">Medium </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </ng-template>
+                </e-annotation>
+                <e-annotation x='91%' y='85%' region='Series'>
+                    <ng-template #content>
+                        <div style='width:80px; padding: 5px;'>
+                            <table style='width: 100%'>
+                                <tr>
+                                    <td class="chartPadding redCircle">Low</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </ng-template>
+                </e-annotation>
+            </e-annotations>
+            <e-series-collection>
+                <e-series [dataSource]='data' type='MultiColoredLine' xName='XValue' yName='YValue' segmentAxis='Y'
+                    name='Australia' width=2 [segments]='segments'>
+                </e-series>
+            </e-series-collection>
+        </ejs-chart>
+    </div>
+    <div *ngIf="loading" class="spinner">
+        <mat-spinner ></mat-spinner>
+
+    </div>
+</div>
